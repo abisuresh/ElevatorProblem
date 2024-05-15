@@ -56,16 +56,13 @@ class Elevator(StateMachine):
         self.elevator_available = False
         return
 
-    def operateElevator(self):
-        while self.elevator_available:
-            self.openDoors()
-
 
 # instantiate elevator class
 new_elevator = Elevator(num_floors=2, elevator_available=False, max_occupancy=10)
 
 # run elevator
-
+new_elevator.elevator_available = True
 new_elevator.pushButton()
+
 
 #%%
