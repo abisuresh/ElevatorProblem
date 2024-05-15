@@ -13,4 +13,11 @@ Overall tech stack:
 
 Specific Requirements for this program: 
 * Please make sure state machine is installed by running command ```pip install python-statemachine```
- 
+
+Assumptions: 
+* There is only 1 elevator
+* There are no other associated requirements to push the button (extra security measures like a room key)
+
+Features not implemented: 
+* Multiple elevators on a floor 
+* Selecting floor number internally 

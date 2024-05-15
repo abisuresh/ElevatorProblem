@@ -36,6 +36,11 @@ class Elevator(StateMachine):
         self.max_occupancy = max_occupancy
         super(Elevator, self).__init__()
 
+    def pushButton(self):
+        if self.elevator_available:
+            self.openDoors()
+        return
+
     def openDoors(self):
         self.door_open = True
         self.door_closed = False
@@ -46,13 +51,9 @@ class Elevator(StateMachine):
         self.door_closed = True
         return
 
-    def pushButton(self):
-        if self.elevator_available:
-            self.openDoors()
-        return
-
     def transport(self, start_floor, end_floor):
         self.transport_active = True
+        self.elevator_available = False
         return
 
     def operateElevator(self):
