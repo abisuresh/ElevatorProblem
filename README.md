@@ -9,7 +9,7 @@ Please be prepared to discuss the assumptions and features that were not impleme
 
 Overall tech stack: 
 * Python 
-* 
+* Python State Machine Framework
 
 Specific Requirements for this program: 
 * Please make sure state machine is installed by running command ```pip install python-statemachine```
