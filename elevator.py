@@ -10,26 +10,29 @@ class Elevator(StateMachine):
     # set states of the elevator
     idle_state = State(initial=True)
     button_pushed = State()
-    transporting = State()
     opening_gates = State()
+    transporting = State()
     closing_gates = State()
     finished_trip = State(final=True)
 
     elevator_requested = idle_state.to(button_pushed)
     opened_gates = (
-        button_pushed.to(opening_gates, cond="opened gates")
-        | button_pushed.to(button_pushed, unless="opened gates")
+            button_pushed.to(opening_gates, cond="opened gates")
+            | button_pushed.to(button_pushed, unless="opened gates")
     )
-    transport = transporting.to(closing_gates, cond="gates closed")
-    finished_transport = transporting.to(finished_trip)
+    transporting_persons = (
+            opened_gates.to(transporting, cond="transporting")
+            | opened_gates.to(opening_gates, unless="transporting")
+    )
+    finishing_transport = transporting.to(closing_gates, cond="gates closed")
+    completed_transport = transporting.to(finished_trip)
 
-    def __init__(self, num_floors, elevator_available=False, max_occupancy=10, door_open=False):
+    def __init__(self, num_floors, door_open=False, elevator_available=False, max_occupancy=10):
+        self.door_open = door_open
         self.elevator_available = elevator_available
         self.num_floors = num_floors
         self.max_occupancy = max_occupancy
-        self.door_open = door_open
         super(Elevator, self).__init__()
-
 
     def openDoors(self):
         if not self.door_open:
