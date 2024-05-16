@@ -20,19 +20,23 @@ class Elevator:
 
     def push_button(self):
         self.open_doors()
+        print('Button pushed')
 
     def open_doors(self):
         self.door_open = True
         self.door_closed = False
+        print('Doors Opened')
 
     def close_doors(self):
         self.door_open = False
         self.door_closed = True
+        print('Doors Closed')
 
     def transport(self, end_floor):
         self.transport_active = True
         self.elevator_available = False
         self.current_floor = end_floor
+        print('Currently Transporting')
 
 
 class ElevatorControl(StateMachine):
@@ -45,6 +49,9 @@ class ElevatorControl(StateMachine):
     transporting = State()
     closing_gates = State()
     finished_trip = State(final=True)
+
+    elevator_loop = idle_state.to.itself()
+    start_elevator = idle_state.to(finished_trip)
 
     elevator_requested = idle_state.to(button_pushed)
     opened_gates = (
@@ -69,5 +76,3 @@ new_elevator.push_button()
 new_elevator_control.finishing_transport
 
 # %%
-
-# add in loop from actions page
