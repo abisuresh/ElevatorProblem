@@ -8,11 +8,10 @@ from statemachine.exceptions import InvalidDefinition
 # https://pypi.org/project/python-statemachine/
 
 class Elevator:
-    def __init__(self, num_floors, max_occupancy=10, elevator_available=False, transport_active=False):
+    def __init__(self, num_floors, elevator_available=False, transport_active=False):
         self.door_open = False
         self.door_closed = False
         self.num_floors = num_floors
-        self.max_occupancy = max_occupancy
         self.current_floor = 1
         self.elevator_available = elevator_available
         self.transport_active = transport_active
@@ -46,7 +45,7 @@ class ElevatorControl(StateMachine):
     button_pushed = State()
     # floor_button = State()
     opening_gates = State()
-    transporting = State()
+    transporting = State(enter="transport")
     closing_gates = State()
     finished_trip = State(final=True)
 
@@ -58,10 +57,11 @@ class ElevatorControl(StateMachine):
             button_pushed.to(opening_gates, cond="door_open")
             | button_pushed.to(button_pushed, unless="door_open")
     )
-    transporting_persons = (
-            opening_gates.to(transporting, cond="transport_active")
-            | opening_gates.to(opening_gates, unless="transport_active")
-    )
+    # transporting_persons = (
+    #         opening_gates.to(transporting, cond="transport_active")
+    #         | opening_gates.to(opening_gates, unless="transport_active")
+    # )
+    transporting_persons = opening_gates.to(transporting)
     finishing_transport = transporting.to(closing_gates, cond="door_closed")
     completed_transport = closing_gates.to(finished_trip)
 
@@ -72,7 +72,11 @@ new_elevator_control = ElevatorControl(new_elevator)
 
 # run elevator
 new_elevator_control.elevator_available = False
-new_elevator.push_button()
-new_elevator_control.finishing_transport
+# new_elevator.push_button()
+# new_elevator_control.finishing_transport
+
+new_elevator_control.elevator_loop()
 
 # %%
+
+#%%
