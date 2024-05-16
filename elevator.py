@@ -34,6 +34,7 @@ class Elevator(StateMachine):
         self.elevator_available = elevator_available
         self.num_floors = num_floors
         self.max_occupancy = max_occupancy
+        self.current_floor = 1
         super(Elevator, self).__init__()
 
     def pushButton(self):
@@ -51,9 +52,10 @@ class Elevator(StateMachine):
         self.door_closed = True
         return
 
-    def transport(self, start_floor, end_floor):
+    def transport(self, end_floor):
         self.transport_active = True
         self.elevator_available = False
+        self.current_floor = end_floor
         return
 
 
@@ -61,8 +63,9 @@ class Elevator(StateMachine):
 new_elevator = Elevator(num_floors=2, elevator_available=False, max_occupancy=10)
 
 # run elevator
-new_elevator.elevator_available = True
+new_elevator.elevator_available = False
 new_elevator.pushButton()
+new_elevator.finishing_transport
 
 
 #%%
