@@ -1,9 +1,14 @@
 from statemachine import StateMachine, State
 
-# Create elevator class to set key parameters and define methods to operate elevator. Utilized python state machine
+
+# Create elevator classes to set key parameters and define methods to operate elevator. Utilized python state machine
 # framework to help with maintaining state here. Please see these docs for official documentation:
 # https://python-statemachine.readthedocs.io/en/latest/readme.html#a-more-useful-example
 # https://pypi.org/project/python-statemachine/
+
+# set pushing button as start of elevator
+# steps in sequence: 1) push button 2) open doors 3) transport
+# 4) open doors at arrival location 5) close doors 6) action completed
 
 class Elevator:
     def __init__(self, transport_active=False):
@@ -39,7 +44,6 @@ class Elevator:
 
 
 class ElevatorControl(StateMachine):
-
     # set states of the elevator
     idle = State(initial=True)
     button_pushed = State()
@@ -79,4 +83,4 @@ new_elevator_control.final()
 
 # %%
 
-#%%
+# %%
