@@ -1,6 +1,4 @@
 from statemachine import StateMachine, State
-from statemachine.exceptions import InvalidDefinition
-
 
 # Create elevator class to set key parameters and define methods to operate elevator. Utilized python state machine
 # framework to help with maintaining state here. Please see these docs for official documentation:
@@ -8,74 +6,76 @@ from statemachine.exceptions import InvalidDefinition
 # https://pypi.org/project/python-statemachine/
 
 class Elevator:
-    def __init__(self, num_floors, elevator_available=False, transport_active=False):
+    def __init__(self, transport_active=False):
         self.door_open = False
-        self.door_closed = False
-        self.num_floors = num_floors
-        self.current_floor = 1
-        self.elevator_available = elevator_available
+        self.door_closed = True
         self.transport_active = transport_active
         super(Elevator, self).__init__()
 
-    def push_button(self):
-        self.open_doors()
-        print('Button pushed')
-
-    def open_doors(self):
+    def on_start_elevator(self):
         self.door_open = True
         self.door_closed = False
-        print('Doors Opened')
+        print("Elevator started, Door opened")
 
-    def close_doors(self):
+    def on_close_door(self):
         self.door_open = False
         self.door_closed = True
-        print('Doors Closed')
+        print("Door closed")
 
-    def transport(self, end_floor):
+    def on_transporting_persons(self):
         self.transport_active = True
-        self.elevator_available = False
-        self.current_floor = end_floor
-        print('Currently Transporting')
+        print("Elevator moving")
+
+    def on_finishing_transport(self):
+        self.transport_active = False
+        self.door_open = True
+        self.door_closed = False
+        print("Elevator arrived and stopped, Door opened")
+
+    def on_completed_transport(self):
+        self.door_open = False
+        self.door_closed = True
+        print("Completed Transport, Door closed")
 
 
 class ElevatorControl(StateMachine):
 
     # set states of the elevator
-    idle_state = State(initial=True, enter="push_button")
+    idle = State(initial=True)
     button_pushed = State()
-    # floor_button = State()
     opening_gates = State()
-    transporting = State(enter="transport")
+    transporting = State()
     closing_gates = State()
     finished_trip = State(final=True)
 
-    elevator_loop = idle_state.to.itself()
-    start_elevator = idle_state.to(finished_trip)
+    elevator_requested = idle.to(button_pushed)
 
-    elevator_requested = idle_state.to(button_pushed)
-    opened_gates = (
-            button_pushed.to(opening_gates, cond="door_open")
-            | button_pushed.to(button_pushed, unless="door_open")
+    start_elevator = (
+            button_pushed.to(opening_gates, cond="door_closed")
+            | opening_gates.to(opening_gates)
     )
-    # transporting_persons = (
-    #         opening_gates.to(transporting, cond="transport_active")
-    #         | opening_gates.to(opening_gates, unless="transport_active")
-    # )
-    transporting_persons = opening_gates.to(transporting)
-    finishing_transport = transporting.to(closing_gates, cond="door_closed")
-    completed_transport = closing_gates.to(finished_trip)
+    close_door = (
+            opening_gates.to(closing_gates, cond="door_open")
+            | closing_gates.to(closing_gates)
+    )
+    transporting_persons = closing_gates.to(transporting)
+    finishing_transport = transporting.to(opening_gates, cond="door_closed")
+    completed_transport = opening_gates.to(closing_gates)
+    final = closing_gates.to(finished_trip)
 
 
 # instantiate elevator classes
-new_elevator = Elevator(num_floors=2)
+new_elevator = Elevator()
 new_elevator_control = ElevatorControl(new_elevator)
 
 # run elevator
-new_elevator_control.elevator_available = False
-# new_elevator.push_button()
-# new_elevator_control.finishing_transport
-
-new_elevator_control.elevator_loop()
+new_elevator_control.elevator_requested()
+new_elevator_control.start_elevator()
+new_elevator_control.close_door()
+new_elevator_control.transporting_persons()
+new_elevator_control.finishing_transport()
+new_elevator_control.completed_transport()
+new_elevator_control.final()
 
 # %%
 
