@@ -21,3 +21,4 @@ Assumptions:
 Features not implemented: 
 * Multiple elevators on a floor 
 * Selecting floor number internally 
+* Loop within action to automatically run elevator 
