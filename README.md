@@ -22,3 +22,8 @@ Features not implemented:
 * Multiple elevators on a floor 
 * Selecting floor number internally 
 * Loop within action to automatically run elevator 
+
+Getting Started: 
+* Git clone repo https://github.com/abisuresh/ElevatorProblem
+* Open app in IDE 
+* Run within IDE or use command ```python elevator.py```
